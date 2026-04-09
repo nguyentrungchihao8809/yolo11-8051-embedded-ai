@@ -44,3 +44,7 @@ Dự án triển khai hệ thống giám sát an ninh thông minh kết hợp gi
 2. **Cài đặt thư viện Python:**
    ```bash
    pip install ultralytics pyserial opencv-python
+
+### Bước 3: Chạy code Python
+   ```bash
+   python main.py
