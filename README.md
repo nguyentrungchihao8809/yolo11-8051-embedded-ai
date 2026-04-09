@@ -26,3 +26,21 @@ Dự án triển khai hệ thống giám sát an ninh thông minh kết hợp gi
 | **Visual** | `LED-RED` | Đèn báo động trực quan trạng thái xâm nhập |
 | **Timing** | `CRYSTAL` | Thạch anh 11.0592MHz (Tối ưu cho baudrate UART) |
 
+## Cài đặt Cổng COM ảo (Virtual Serial Port)
+Để kết nối Python và Proteus trên cùng một máy tính, bạn cần tạo một cặp cổng COM ảo:
+1. Sử dụng phần mềm **VSPD (Virtual Serial Port Driver)** hoặc **com0com**.
+2. Tạo một cặp cổng mới (Ví dụ: **COM1** và **COM2**).
+3. Trong **Proteus (COMPIM):** Chọn `Physical Port` là `COM1`, Baudrate `9600`.
+4. Trong **Python Code:** Cấu hình Serial port là `COM2`, Baudrate `9600`.
+
+## Quy trình vận hành (Execution Guide)
+
+### Bước 1: Chuẩn bị Firmware
+- Biên dịch code (C/Assembly) bằng **Keil C51** để lấy file `.hex`.
+- Nạp file `.hex` vào vi điều khiển AT89C51 trong Proteus.
+
+### Bước 2: Khởi chạy hệ thống
+1. **Chạy Proteus:** Nhấn nút **Play** để bắt đầu mô phỏng và mở cổng lắng nghe từ COMPIM.
+2. **Cài đặt thư viện Python:**
+   ```bash
+   pip install ultralytics pyserial opencv-python
