@@ -11,7 +11,6 @@ ORG 0100H
 MAIN:
     MOV SP, #60H     
 
-; --- PHẦN CẬP NHẬT TRONG COMMIT 2 ---
     MOV TMOD, #21H   
     MOV TH0, #3CH   
     MOV TL0, #0B0H  
