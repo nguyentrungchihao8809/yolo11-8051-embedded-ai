@@ -1,14 +1,23 @@
 $INCLUDE (REG51.INC)
 
-LED      BIT P1.0
-BUZZER   BIT P1.1
-TIMEOUT  EQU 30H
+LED      BIT P1.0    
+BUZZER   BIT P1.1   
+TIMEOUT  EQU 30H    
 
-ORG 0000H
-    LJMP MAIN
+ORG 0000H           
+LJMP MAIN
 
-ORG 0100H
+ORG 0100H           
 MAIN:
-    MOV SP, #60H
-    SJMP $
+    MOV SP, #60H     
+
+; --- PHẦN CẬP NHẬT TRONG COMMIT 2 ---
+    MOV TMOD, #21H   
+    MOV TH0, #3CH   
+    MOV TL0, #0B0H  
+    MOV TIMEOUT, #0  
+    CLR LED         
+    CLR BUZZER      
+
+    SJMP $          
 END
