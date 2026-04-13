@@ -1,62 +1,83 @@
 $INCLUDE (REG51.INC)
-LED     BIT P1.0    
-BUZZER  BIT P1.1    
-TIMEOUT EQU 30H      
 
-ORG 0000H            
+LED         BIT P1.0
+BUZZER      BIT P1.1
+TIMEOUT     EQU 30H 
+SYSTEM_ON   BIT 00H
+
+ORG 0000H
 LJMP MAIN
 
-ORG 000BH            
+ORG 0003H
+LJMP EX0_ISR
+
+ORG 000BH
 LJMP T0_ISR
 
-ORG 0023H            
+ORG 0023H
 LJMP UART_ISR
 
 ORG 0100H
+
 MAIN:
-    MOV SP, #60H     
-    MOV TMOD, #21H   
-    MOV TH0, #3CH    
-    MOV TL0, #0B0H
-    MOV TIMEOUT, #0  
-    CLR LED
-    CLR BUZZER
-    MOV TH1, #0FDH   
-    MOV SCON, #50H   
-    SETB TR1         
+	MOV SP, #60H
+	SETB SYSTEM_ON
+	MOV TMOD, #21H
+	MOV TH1, #0FDH
+	MOV SCON, #50H
+	SETB TR1
+	MOV TH0, #3CH
+	MOV TL0, #0B0H
+	MOV TIMEOUT, #0
+	CLR LED
+	CLR BUZZER
+	SETB EX0
+	SETB IT0
+	SETB ET0
+	SETB ES
+	SETB EA
+	SETB TR0
+	SJMP $
 
-    SETB ET0         
-    SETB ES          
-    SETB EA          
-    SETB TR0         
-
-    SJMP $           
+EX0_ISR:
+	CPL SYSTEM_ON
+	JB SYSTEM_ON, EXIT_EX0
+	CLR LED
+	CLR BUZZER
+	MOV TIMEOUT, #0
+EXIT_EX0:
+	RETI
 
 UART_ISR:
-    JNB RI, EXIT_UART      
-    MOV A, SBUF            
-    CLR RI                 
-    CJNE A, #'A', EXIT_UART 
-    
-    SETB LED               
-    SETB BUZZER            
-    MOV TIMEOUT, #20       
+	JNB RI, EXIT_UART
+	MOV A, SBUF
+	CLR RI
+	JNB SYSTEM_ON, EXIT_UART
+	CJNE A, #'A', EXIT_UART
+	SETB LED
+
+	SETB BUZZER
+
+	MOV TIMEOUT, #20
+
 EXIT_UART:
-    RETI
+	RETI
 
 T0_ISR:
-    MOV TH0, #3CH          
-    MOV TL0, #0B0H
-    MOV A, TIMEOUT
-    JZ EXIT_T0             
-    
-    DEC TIMEOUT            
-    MOV A, TIMEOUT
-    JNZ EXIT_T0            
-    
-    CLR LED                
-    CLR BUZZER
-EXIT_T0:
-    RETI
+	MOV TH0, #3CH
+	MOV TL0, #0B0H
+	MOV A, TIMEOUT
+	JZ EXIT_T0
 
-END
+	DEC TIMEOUT
+	MOV A, TIMEOUT
+	JNZ EXIT_T0
+
+	CLR LED
+
+	CLR BUZZER
+
+EXIT_T0:
+	RETI
+
+	END
